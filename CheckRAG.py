@@ -1,10 +1,11 @@
 import os
+import CheckEmbedding
 from langchain.vectorstores import Chroma
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain_openai import AzureChatOpenAI
-import CheckEmbedding
+
 # Load the document chunks into a vector database
 db = Chroma.from_documents(documents=CheckEmbedding.doc_chunks, embedding=CheckEmbedding.emb)
 retriever = db.as_retriever()
@@ -28,7 +29,7 @@ rag_model = AzureChatOpenAI(
     openai_api_version = os.getenv("AZURE_OPENAI_API_VERSION"),
     azure_deployment = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_NAME"),
     temperature = 0.8,
-    max_tokens = 60
+    max_tokens = 100
 )
 # Create the RAG chain
 docs_chain = create_stuff_documents_chain(rag_model, rag_prompt)
@@ -42,5 +43,5 @@ def query(question: str) -> dict:
     return res
 
 # Ask a question based on the document
-res = query("Explain what this pdf is about in a sentence")
+res = query("Summarize this document")
 print(res['answer'])

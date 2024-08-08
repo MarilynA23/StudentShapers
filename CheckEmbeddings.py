@@ -1,17 +1,20 @@
 import os
 from dotenv import load_dotenv
 from langchain.embeddings import AzureOpenAIEmbeddings
-load_dotenv()
 from langchain.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+load_dotenv()
 
 # Initialize the embeddings model
 
-emb = AzureOpenAIEmbeddings()
+emb = AzureOpenAIEmbeddings(
+    deployment = os.getenv("EMBEDDING_MODEL_NAME"),
+    model =  os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT_NAME")
+)
 
 # Load a PDF document and split into chunks
 # See https://github.com/ollama/ollama/blob/main/examples/langchain-python-rag-document/main.py
-loader = PyPDFLoader("Sample Report.pdf")
+loader = PyPDFLoader("EEE Lecture Notes.pdf")
 splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=0)
 docs = loader.load()
 doc_chunks = splitter.split_documents(docs)
